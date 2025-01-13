@@ -40,9 +40,15 @@ GET http://localhost:8080/rewards/calculate?customerId=1&startDate=2025-01-10&en
     "customerId": 1,
     "customerName": "Gauri Sharma",
     "monthlyRewards": {
-        "JANUARY": 120,
-        "FEBRUARY": 150
-    },
+        "JANUARY": {
+            "totalPoints": 120,
+            "totalAmount": 200.0
+        },
+        "FEBRUARY": {
+            "totalPoints": 150,
+            "totalAmount": 150.0
+        }
+    }
     "transactions": [
         {
             "id": 1,
