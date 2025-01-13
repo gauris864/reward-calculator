@@ -11,15 +11,14 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import com.example.rewards.controller.RewardsController;
 import com.example.rewards.exception.DateFormatException;
 import com.example.rewards.exception.ResourceNotFoundException;
 import com.example.rewards.model.Customer;
+import com.example.rewards.model.MonthlyRewards;
 import com.example.rewards.model.RewardResponse;
 import com.example.rewards.model.Transaction;
 import com.example.rewards.repository.CustomerRepository;
@@ -44,7 +43,7 @@ public class RewardService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate start;
         LocalDate end;
-
+        
         try {
             start = LocalDate.parse(startDate, formatter);
             end = LocalDate.parse(endDate, formatter);
@@ -76,11 +75,15 @@ public class RewardService {
         }
         logger.info("Found {} transactions for customerId: {} in the date range: {} to {}", filteredTransactions.size(), customerId, start, end);
 
-        Map<String, Integer> rewards = new HashMap<>();
+        Map<String, MonthlyRewards> rewards = new HashMap<>();
         for (Transaction trans : filteredTransactions) {
             int points = calculatePoints(trans.getAmount());
             String month = trans.getDate().getMonth().toString();
-            rewards.put(month, rewards.getOrDefault(month, 0) + points);
+            MonthlyRewards details = rewards.getOrDefault(month, new MonthlyRewards(0, 0.0));
+            details.setTotalPoints(details.getTotalPoints() + points);
+            details.setTotalAmount(details.getTotalAmount() + trans.getAmount());
+            rewards.put(month, details);
+
             logger.debug("Transaction amount: {}, Points awarded: {}, Month: {}", trans.getAmount(), points, month);
         }
 

@@ -22,20 +22,18 @@ public class RewardsController {
     private RewardService rewardService;
 
     @GetMapping("/rewards/calculate")
-    public CompletableFuture<ResponseEntity<?>> getRewards(
+    public CompletableFuture<RewardResponse> getRewards(
             @RequestParam Long customerId,
             @RequestParam String startDate,
             @RequestParam String endDate) {
-
         long startTime = System.currentTimeMillis();
         logger.info("Received request to calculate rewards for customer ID: {}", customerId);
-
-        CompletableFuture<RewardResponse> rewardResponseFuture = rewardService.calculateRewards(customerId, startDate, endDate);
-
-        return rewardResponseFuture.thenApply(rewardResponse -> {
-            long endTime = System.currentTimeMillis();
-            logger.info("Total execution time for reward calculation: {} ms", (endTime - startTime));
-            return ResponseEntity.ok(rewardResponse);
-        });
+        
+        return rewardService.calculateRewards(customerId, startDate, endDate)
+                .thenApply(rewardResponse -> {
+                    long endTime = System.currentTimeMillis();
+                    logger.info("Total execution time for reward calculation: {} ms", (endTime - startTime));
+                    return rewardResponse;
+                });
     }
 }

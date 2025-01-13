@@ -22,7 +22,7 @@ public class RewardResponse {
 	@JsonProperty("customerName")
 	private String customerName;
 	@JsonProperty("monthlyRewards")
-	private Map<String, Integer> monthlyRewards;
+	private Map<String, MonthlyRewards> monthlyRewards;
 	private List<Transaction> transactions;
 
 }
